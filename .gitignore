@@ -1,0 +1,38 @@
+# Secrets
+.env
+.env.*
+!.env.example
+
+# Node
+node_modules/
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Generated output / user uploads
+output/
+outputs/
+uploads/
+
+# Kept on this computer only, never published
+archive/
+samples/
+PLAN.md
+docs/
+
+# Anything Claude-related (kept local only)
+*claude*
+*Claude*
+*CLAUDE*
+.claude/
+
+# Test cache
+.pytest_cache/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/

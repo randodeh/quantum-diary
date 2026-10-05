@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>The Quantum Diary</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Playfair+Display:wght@400;700&family=Fraunces:wght@400;700&family=Bebas+Neue&family=Quicksand:wght@400;600&family=Comfortaa:wght@400;700&family=Italiana&family=Libre+Baskerville:wght@400;700&family=EB+Garamond:wght@400;600&family=Lora:wght@400;600&family=Nunito:wght@400;700&family=Inter:wght@400;600&family=Permanent+Marker&family=Caveat:wght@500;700&family=Dancing+Script:wght@500;700&family=Homemade+Apple&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/page-flip@2.0.7/dist/js/page-flip.browser.js"></script>
+  <script src="chosen-theme.js"></script>
+  <script src="vendor/compromise.js"></script>  <!-- compromise 14.14.4 (MIT): finds nouns/verbs in the browser -->
+  <link rel="stylesheet" href="style.css">
+  <script>
+    // If anything breaks, show it on screen (so it can be reported) instead of failing silently.
+    function showProblem(msg) {
+      let box = document.getElementById("problem");
+      if (!box) { box = document.createElement("div"); box.id = "problem"; document.body.append(box); }
+      box.textContent = "Something went wrong: " + msg;
+    }
+    addEventListener("error", (e) => showProblem(e.message + (e.filename ? " (" + e.filename.split("/").pop() + ":" + e.lineno + ")" : "")));
+    addEventListener("unhandledrejection", (e) => showProblem(String(e.reason && e.reason.message || e.reason)));
+    if (location.protocol === "file:") addEventListener("DOMContentLoaded", () => showProblem("this page must be opened through the server: http://127.0.0.1:8000/diary/"));
+  </script>
+</head>
+<body>
+  <div class="aurora" aria-hidden="true"><span></span><span></span><span></span></div>
+
+  <nav id="nav" hidden>
+    <span class="brand">The Quantum Diary</span>
+    <button data-view="write"><i class="ic">✍️</i>Write</button>
+    <button data-view="normal"><i class="ic">📖</i>Diary</button>
+    <button data-view="quantum"><i class="ic">✨</i>Quantum diary</button>
+    <button data-view="week"><i class="ic">📅</i>My week</button>
+    <button id="music">Music off</button>
+  </nav>
+
+  <!-- COVER -->
+  <section id="v-cover" class="view on">
+    <div class="cover">
+      <h1>The Quantum Diary</h1>
+      <p class="hand">your mind, measured</p>
+      <button id="open" class="btn">Open</button>
+      <p class="small">Write how your day was. How you type and what you feel become a living picture of your mind, and a song, made with quantum engines.</p>
+    </div>
+    <footer class="credit">Quantum engines by <a href="https://mothquantum.com" target="_blank" rel="noopener">Moth Quantum</a> Atlas · page turns by <a href="https://github.com/Nodlik/StPageFlip" target="_blank" rel="noopener">StPageFlip</a> (MIT) · word finding by <a href="https://github.com/spencermountain/compromise" target="_blank" rel="noopener">compromise</a> (MIT)</footer>
+  </section>
+
+  <!-- WRITE -->
+  <section id="v-write" class="view">
+    <div class="paper">
+      <div class="date" id="today"></div>
+      <p class="hand prompt">how was today?</p>
+      <textarea id="text" placeholder="Start writing… just be honest, nobody else reads this." spellcheck="true"></textarea>
+      <div class="writebar">
+        <span id="live" class="small"></span>
+        <button id="finish" class="btn" disabled>Finish today's entry</button>
+      </div>
+      <p class="small private">Your words never leave this device. Only numbers (your typing rhythm and the links in your brain map) go to the quantum engines.</p>
+    </div>
+  </section>
+
+  <!-- MAKING -->
+  <section id="v-making" class="view">
+    <div class="making">
+      <h2>Measuring your mind…</h2>
+      <ol id="steps"></ol>
+    </div>
+  </section>
+
+  <!-- QUANTUM DIARY -->
+  <section id="v-quantum" class="view">
+    <canvas id="map"></canvas>
+    <div class="q-head">
+      <div class="q-date" id="qDate"></div>
+      <div class="q-mood" id="qMood"></div>
+      <div class="small q-why" id="qWhy"></div>
+      <div class="chips" id="qChips"></div>
+    </div>
+    <div class="q-controls">
+      <button id="prev" class="btn secondary">Previous</button>
+      <button id="play" class="btn">Play this day</button>
+      <button id="next" class="btn secondary">Next</button>
+      <button id="dlSong" class="btn secondary" title="Save this day's song as a .wav file">Save song</button>
+      <button id="recVideo" class="btn secondary" title="Record a video of this day's brain map with its song">Record video</button>
+    </div>
+    <div class="q-proof small" id="qProof"></div>
+    <div class="empty" id="qEmpty" hidden>No entries yet. <button class="btn" data-view="write">Write your first one</button></div>
+  </section>
+
+  <!-- WEEKLY REVIEW -->
+  <section id="v-week" class="view scroll">
+    <div class="week-wrap">
+      <div class="week-head">
+        <h2>Your week, measured</h2>
+        <p class="small" id="wkRange"></p>
+        <p class="small" id="wkExampleNote" hidden>You're looking at an <b>example week</b>. Your own diary isn't changed.
+          <button class="btn secondary tiny" id="wkMine">Show my week</button></p>
+      </div>
+      <div id="wkEmpty" class="wk-empty" hidden>
+        <p>Your weekly review appears once you've written on at least 2 days this week.</p>
+        <button class="btn" id="wkExample">Try an example week</button>
+      </div>
+      <div id="wkBody">
+        <h3>How the week went</h3>
+        <div class="timeline" id="wkTimeline"></div>
+        <p class="small legend">Top dot: what your <b>words</b> said · bar: how hard you <b>typed</b> · label: what your typing suggested</p>
+        <div class="cards" id="wkCards"></div>
+        <h3>The week's brain map</h3>
+        <div class="wk-map"><canvas id="wkMap"></canvas></div>
+        <div class="row"><button class="btn" id="wkPlay">Play your week</button><span class="small" id="wkSongInfo"></span></div>
+        <h3>Quantum mood forecast <span class="small">(just for fun)</span></h3>
+        <div class="forecast" id="wkForecast">
+          <p class="small">A quantum reservoir (Moth's <code>qrc-midi-v1</code>) learns the order of your moods this week and continues the pattern.
+            It's learning from one week, so treat it like a horoscope, not a prediction.</p>
+          <button class="btn" id="wkForecastBtn">Make my forecast</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- NORMAL DIARY -->
+  <section id="v-normal" class="view">
+    <div id="bookHost"></div>
+  </section>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>

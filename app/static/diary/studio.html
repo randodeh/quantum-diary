@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Diary Design Studio</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600&family=Playfair+Display:wght@400&family=Fraunces:wght@400&family=Bebas+Neue&family=Quicksand:wght@400&family=Comfortaa:wght@400&family=Italiana&family=Libre+Baskerville&family=EB+Garamond&family=Lora&family=Nunito&family=Inter:wght@400;600&family=Permanent+Marker&family=Caveat&family=Dancing+Script&family=Homemade+Apple&display=swap" rel="stylesheet">
+  <script src="chosen-theme.js"></script>
+  <style>
+    * { box-sizing: border-box; }
+    body { margin: 0; font: 14px/1.4 Inter, system-ui, sans-serif; background: #111014; color: #eee; }
+    .layout { display: grid; grid-template-columns: 1fr 380px; height: 100vh; }
+    @media (max-width: 1000px) { .layout { grid-template-columns: 1fr; height: auto; } iframe { height: 70vh; } }
+    .left { display: flex; flex-direction: column; min-width: 0; }
+    .tabs { display: flex; gap: 4px; padding: 8px; background: #1a191e; flex-wrap: wrap; }
+    .tabs button, .opt { font: 13px Inter, sans-serif; background: #26252b; color: #eee; border: 1px solid #34333a; border-radius: 8px; padding: 7px 11px; cursor: pointer; }
+    .tabs button.on, .opt.on { background: #fff; color: #111; border-color: #fff; }
+    iframe { flex: 1; width: 100%; border: 0; background: #000; }
+    .panel { background: #1a191e; border-left: 1px solid #2a2930; padding: 16px 16px 40px; overflow-y: auto; }
+    .panel h1 { font: 600 20px Inter, sans-serif; margin: 0 0 4px; }
+    .panel > p { color: #9a97a6; margin: 0 0 10px; font-size: 13px; }
+    .group { border-top: 1px solid #2a2930; padding: 11px 0; }
+    .group h3 { margin: 0 0 7px; font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: #9a97a6; display: flex; justify-content: space-between; font-weight: 600; }
+    .group h3 b { color: #fff; letter-spacing: 0; text-transform: none; }
+    .opts { display: flex; flex-wrap: wrap; gap: 5px; }
+    .opt .sw { display: inline-flex; gap: 2px; margin-right: 6px; vertical-align: -2px; }
+    .opt .sw i { width: 10px; height: 14px; border-radius: 2px; display: inline-block; }
+    .font-opt { font-size: 16px; }
+    .export button { width: 100%; padding: 12px; border-radius: 10px; border: 0; background: #fff; color: #111; font-weight: 600; cursor: pointer; margin-top: 14px; }
+    .export pre { white-space: pre-wrap; background: #0d0c10; padding: 10px; border-radius: 8px; font-size: 12px; color: #cfe; display: none; }
+  </style>
+</head>
+<body>
+<div class="layout">
+  <div class="left">
+    <div class="tabs" id="tabs"></div>
+    <iframe id="frame" src="index.html?demo&studio" title="Live preview of the diary"></iframe>
+  </div>
+  <aside class="panel">
+    <h1>Diary Design Studio</h1>
+    <p>Every choice changes the real diary on the left straight away. Use the tabs to see each screen. When you're happy, press "Copy my choices" and paste them to Claude.</p>
+    <div id="groups"></div>
+    <div class="export"><button id="copy">Copy my choices</button><pre id="out"></pre></div>
+  </aside>
+</div>
+<script type="module">
+  import { OPTIONS, loadTheme, saveTheme } from "./theme.js";
+  const frame = document.getElementById("frame");
+  let T = loadTheme();
+  const SCREENS = [["cover", "Cover"], ["write", "Writing page"], ["making", "Measuring"], ["quantum", "Quantum diary"], ["week", "My week"], ["normal", "Diary book"]];
+  let screen = "write";
+
+  const send = (msg) => frame.contentWindow && frame.contentWindow.postMessage(msg, location.origin);
+  frame.addEventListener("load", () => { send({ type: "theme", theme: T }); send({ type: "view", view: screen }); });
+
+  const tabs = document.getElementById("tabs");
+  for (const [id, label] of SCREENS) {
+    const b = document.createElement("button"); b.textContent = label; b.dataset.id = id;
+    b.onclick = () => { screen = id; [...tabs.children].forEach((x) => x.classList.toggle("on", x === b)); send({ type: "view", view: id }); };
+    if (id === screen) b.classList.add("on");
+    tabs.append(b);
+  }
+
+  function render() {
+    const host = document.getElementById("groups"); host.innerHTML = "";
+    for (const [key, g] of Object.entries(OPTIONS)) {
+      const div = document.createElement("div"); div.className = "group";
+      div.innerHTML = `<h3>${g.label} <b>${g.options[T[key]]?.label || ""}</b></h3><div class="opts"></div>`;
+      for (const [val, o] of Object.entries(g.options)) {
+        const b = document.createElement("button");
+        b.className = "opt" + (g.font ? " font-opt" : "") + (T[key] === val ? " on" : "");
+        if (key === "palette" && o.bg) b.innerHTML = `<span class="sw">${[o.bg, o.surface, o.accent, o.text].map((c) => `<i style="background:${c}"></i>`).join("")}</span>${o.label}`;
+        else if (g.swatch) b.innerHTML = `<span class="sw"><i style="background:${o.hex};width:14px"></i></span>${o.label}`;
+        else b.textContent = o.label;
+        if (g.font && val !== "none") b.style.fontFamily = `"${val}"`;
+        b.onclick = () => { T = { ...T, [key]: val }; saveTheme(T); send({ type: "theme", theme: T }); render(); };
+        div.querySelector(".opts").append(b);
+      }
+      host.append(div);
+    }
+  }
+  render();
+
+  document.getElementById("copy").onclick = async () => {
+    const lines = Object.entries(OPTIONS).map(([k, g]) => `${g.label}: ${g.options[T[k]]?.label}`);
+    const text = "My diary design:\n" + lines.join("\n") + "\n\n" + JSON.stringify(T);
+    const out = document.getElementById("out"); out.textContent = text; out.style.display = "block";
+    try { await navigator.clipboard.writeText(text); document.getElementById("copy").textContent = "Copied! Paste it to Claude"; } catch {}
+  };
+</script>
+</body>
+</html>

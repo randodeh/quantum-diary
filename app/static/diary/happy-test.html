@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Happy Song Test</title>
+  <script src="chosen-theme.js"></script>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    body { display: grid; place-items: center; min-height: 100vh; margin: 0; padding: 16px; text-align: center; }
+    .row { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; margin: 18px 0; }
+    p { max-width: 560px; }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Which happy sound?</h1>
+    <p>The same happy entry, the same quantum song (qrc-midi-v1), played three ways. Press one, listen, then tell Claude which you like.</p>
+    <p id="entry"></p>
+    <div class="row" id="row"></div>
+    <button class="btn secondary" id="stop">Stop</button>
+  </main>
+  <script type="module">
+    import { Player, HAPPY_STYLES } from "./music.js";
+    import { loadTheme, applyTheme } from "./theme.js";
+    applyTheme(loadTheme());
+    const sample = await (await fetch("happy-sample.json")).json();
+    document.getElementById("entry").textContent = `"${sample.text}"`;
+    const player = new Player(), row = document.getElementById("row");
+    for (const [key, label] of Object.entries(HAPPY_STYLES)) {
+      const b = document.createElement("button"); b.className = "btn"; b.textContent = label;
+      b.onclick = () => { window.QD_THEME = { ...window.QD_THEME, happySound: key }; player.play({ bpm: sample.bpm, notes: sample.notes }, "happy", 0.45); };
+      row.append(b);
+    }
+    document.getElementById("stop").onclick = () => player.stop();
+  </script>
+</body>
+</html>
