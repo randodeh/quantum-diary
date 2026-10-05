@@ -3,4 +3,4 @@
 window.CHOSEN_THEME = { palette: "fishMine", moodColours: "fish", cBg: "green",
   titleFont: "Comfortaa", bodyFont: "Inter", handFont: "none", buttons: "square",
   transition: "quantum", music: "on", happySound: "warm",
-  nodeStyle: "glow", connections: "nerve", glow: "1" };
+  nodeStyle: "glow", connections: "classic" };

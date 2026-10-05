@@ -42,7 +42,7 @@ export class BrainMap {
         a: (j / count) * Math.PI * 2 + rnd() * 0.7, L: 0.7 + rnd() * 0.9, bend: (rnd() - 0.5) * 0.9,
         kids: Array.from({ length: rnd() < 0.85 ? 1 + Math.floor(rnd() * 2) : 0 }, () => ({ at: 0.45 + rnd() * 0.3, da: (rnd() < 0.5 ? -1 : 1) * (0.35 + rnd() * 0.5), L: 0.3 + rnd() * 0.35 })),
       }));
-      return { ...m, bx: W / 2 + Math.cos(a) * r * 1.3, by: H * 0.6 + Math.sin(a) * r * 0.74, x: 0, y: 0, ph: i * 1.7 + b.Y * 3, size: 5 + purity * 7, dend };
+      return { ...m, bx: W / 2 + Math.cos(a) * r * 1.3, by: H * 0.56 + Math.sin(a) * r * 0.8, x: 0, y: 0, ph: i * 1.7 + b.Y * 3, size: 5 + purity * 7, dend };
     });
     // a faint, deeper web of tiny far-away neurons behind the map
     const rd = seeded((this.entry.seed || 1) * 31 + 5);

@@ -83,7 +83,7 @@ export const OPTIONS = {
 export const DEFAULT_THEME = {
   palette: "lavender", background: "plain", titleFont: "Cormorant Garamond", bodyFont: "Lora", handFont: "none",
   titleSize: "1", textSize: "17", corners: "10", spacing: "1", writePaper: "glass", buttons: "pill", navIcons: "text",
-  transition: "none", nodeStyle: "glow", glow: "0.5", motion: "0.5", labels: "show", connections: "nerve", mapBackdrop: "none", music: "off", happySound: "dreamy", moodColours: "original",
+  transition: "none", nodeStyle: "glow", glow: "0.5", motion: "0.5", labels: "show", connections: "classic", mapBackdrop: "none", music: "off", happySound: "dreamy", moodColours: "original",
   cBg: "deepsea", cPanel: "royal", cTitle: "orange", cButton: "orange", cText: "pearl", cMood: "turquoise",
 };
 
