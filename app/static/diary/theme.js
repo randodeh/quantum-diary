@@ -3,6 +3,7 @@
 
 // The mandarin fish's colours (from the user's photo, made vivid like the real fish).
 export const FISH_SWATCHES = {
+  night:     { label: "Night purple",   hex: "#1b1630" },
   ocean:     { label: "Ocean black",    hex: "#0c1413" },
   deepsea:   { label: "Deep sea green", hex: "#0f3b33" },
   orange:    { label: "Fish orange",    hex: "#f2781e" },
