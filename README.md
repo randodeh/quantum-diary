@@ -58,5 +58,4 @@ example week without writing seven entries. Tests (fake Atlas, no credits): `pyt
 
 Quantum engines by [Moth Quantum](https://mothquantum.com) Atlas. Page turns by
 [StPageFlip](https://github.com/Nodlik/StPageFlip) (MIT). Word finding by
-[compromise](https://github.com/spencermountain/compromise) (MIT). Built with help from Claude (Anthropic)
-as a coding assistant.
+[compromise](https://github.com/spencermountain/compromise) (MIT).
