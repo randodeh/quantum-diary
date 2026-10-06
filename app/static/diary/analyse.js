@@ -105,7 +105,9 @@ function hits(text) {
       else if (POSITIVE.has(mood)) found.push({ mood: "sad", word: `not ${w}`, at: r.index });
     }
   }
-  return found;
+  // a word inside a longer phrase that already matched ("sleep" in "couldn't sleep") only counts once
+  const span = (h) => h.word.replace(/^not /, "").length;
+  return found.filter((h) => !found.some((g) => g !== h && span(g) > span(h) && h.at >= g.at && h.at <= g.at + span(g)));
 }
 
 export function feelings(text) {
